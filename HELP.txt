@@ -1,0 +1,22 @@
+Start VirtualBox Fedora 22 64-bit instance
+Open http://blog.keycloak.org/2015/04/running-keycloak-cluster-with-docker.html
+Follow instructions for checking that Docker daemon is running and that locally you can connect to it using docker command from boot2docker
+
+First rebuild everything to use the latest keycloak server-dist:
+
+./build.sh
+
+Now start postgres db:
+
+docker run --name postgres -e POSTGRES_DATABASE=keycloak -e POSTGRES_USER=keycloak -e POSTGRES_PASSWORD=password -e POSTGRES_ROOT_PASSWORD=password -d postgres
+
+And now start a new keycloak instance:
+
+docker run -p 8080:8080 --name keycloak --link postgres:postgres -e POSTGRES_DATABASE=keycloak -e POSTGRES_USER=keycloak -e POSTGRES_PASSWORD=password -d jboss/keycloak-ha-postgres:1.6.0.Final-SNAPSHOT
+docker logs -f keycloak
+
+And another:
+
+docker run -p 8081:8080 --name keycloak2 --link postgres:postgres -e POSTGRES_DATABASE=keycloak -e POSTGRES_USER=keycloak -e POSTGRES_PASSWORD=password -d jboss/keycloak-ha-postgres:1.560.Final-SNAPSHOT
+docker logs -f keycloak2
+
